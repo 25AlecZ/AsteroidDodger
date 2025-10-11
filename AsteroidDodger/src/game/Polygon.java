@@ -57,6 +57,26 @@ class Polygon {
     return points;
   }
   
+  
+  
+  public boolean collides(Polygon other) {
+	  Point[] thisPts = this.getPoints();
+	  Point[] otherPts = other.getPoints();
+	  
+	  for(Point p : thisPts) {
+		  if(other.contains(p)) {
+			  return true;
+		  }
+	  }
+	  
+	  for(Point p : otherPts) {
+		  if(this.contains(p)) {
+			  return true;
+		  }
+	  }
+	  return false;
+  }
+  
   // "contains" implements some magical math (i.e. the ray-casting algorithm).
   public boolean contains(Point point) {
     Point[] points = getPoints();

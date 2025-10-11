@@ -15,12 +15,15 @@ class AsteroidDodger extends Game {
 	static int rotation = 0;
 	//keep asteroid instances outside of paint method for rotation
 	private Asteroid a;
+	private Player p;
 	
   public AsteroidDodger() {
     super("YourGameName!",1000,1000);
     this.setFocusable(true);
 	this.requestFocus();
 	this.a = new Asteroid(200, 200, 16, 8);
+	this.p = new Player(500,500,5,15);
+	this.addKeyListener(this.p);
   }
   
 	public void paint(Graphics brush) {
@@ -42,33 +45,26 @@ class AsteroidDodger extends Game {
             shape.rotation += 5;
             
             
-            Point[] pts = shape.getPoints();
-            int[] x = new int[pts.length];
+            draw(shape.getPoints(), brush);
+            draw(p.getShape().getPoints(), brush);
+            a.move(1000, new Point(50, 200));
+            
+
+    	
+    	
+        
+    	brush.drawString("Counter is " + counter,10,10);
+  }
+	
+	public static void draw(Point[] pts, Graphics brush) {
+		 int[] x = new int[pts.length];
             int[] y = new int[pts.length];
             for (int i = 0; i < pts.length; i++) {
                 x[i] = (int) pts[i].x;
                 y[i] = (int) pts[i].y;
             }
             
-            a.move(1000, new Point(50, 200));
             brush.fillPolygon(x, y, pts.length);
-
-    	
-    	
-    	brush.drawString("Counter is " + counter,10,10);
-  }
-	
-	public static void showBoard(Graphics brush) {
-		for(int r = 0; r < 10; r++) {
-			for(int c = 0; c < 10; c++) {
-				if(r % 2 == 1) {
-					brush.setColor(Color.BLACK);
-				} else {
-					brush.setColor(Color.GRAY);
-				}
-		    	brush.fillRect(r*100, c*100, 100, 100);
-			}
-		}
 	}
   
 	public static void main (String[] args) {
