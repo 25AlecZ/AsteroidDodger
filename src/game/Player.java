@@ -6,17 +6,33 @@ import java.awt.event.KeyListener;
 public class Player implements KeyListener{
 	
 	private Timer timeLived;
-	private int lives;
+	private int health;
 	private int speed;
 	private Polygon shape;
-	
-	public Player(int x, int y, int lives, int speed) {
-		this.lives = lives;
+	private boolean upPressed, downPressed, leftPressed, rightPressed;
+	public Player(int x, int y, int health, int speed) {
+		this.health = health;
 		this.speed = speed;
 		this.timeLived = new Timer();
 		
-		Point[] points = {new Point(0,50), new Point(10,0), new Point(20, 50)};
+		Point[] points = {new Point(0, 10), new Point(50, 0), new Point(50, 20)};
 		this.shape = new Polygon(points, new Point(x,y), 0);
+	}
+	
+	public int getTimeLived() {
+		return timeLived.getSeconds();
+	}
+	
+	public void incrementTimer() {
+		this.timeLived.seconds++;
+	}
+	
+	public int getHealth() {
+		return health;
+	}
+	
+	public void decrementHealth() {
+		health--;
 	}
 	
 	public Polygon getShape() {
@@ -43,24 +59,53 @@ public class Player implements KeyListener{
 	@Override
 	public void keyTyped(KeyEvent e) {}
 	
+	
 	@Override
 	//still need to add keys for moving up, left, right
 	public void keyPressed(KeyEvent e) {
-		if(e.getKeyCode() == KeyEvent.VK_DOWN) {
-			moveY(false);
-		} else if(e.getKeyCode() == KeyEvent.VK_UP) {
-			moveY(true);
-		} else if(e.getKeyCode() == KeyEvent.VK_LEFT) {
-			moveX(true);
-		} else if(e.getKeyCode() == KeyEvent.VK_RIGHT) {
-			moveX(false);
-		}
+		switch (e.getKeyCode()) {
+		case KeyEvent.VK_UP:
+			upPressed = true;
+			break;
+		case KeyEvent.VK_DOWN:
+			downPressed = true;
+			break;
+		case KeyEvent.VK_LEFT:
+			leftPressed = true;
+			break;
+		case KeyEvent.VK_RIGHT: 
+			rightPressed = true;
+			break;
+	}
 			
 		
 	}
 
 	@Override
-	public void keyReleased(KeyEvent e) {}
+	public void keyReleased(KeyEvent e) {
+		switch (e.getKeyCode()) {
+			case KeyEvent.VK_UP:
+				upPressed = false;
+				break;
+			case KeyEvent.VK_DOWN:
+				downPressed = false;
+				break;
+			case KeyEvent.VK_LEFT:
+				leftPressed = false;
+				break;
+			case KeyEvent.VK_RIGHT: 
+				rightPressed = false;
+				break;
+		}
+	
+	}
+	
+	public void move() {
+	    if (upPressed) {moveY(true);}
+	    if (downPressed) {moveY(false);}
+	    if (leftPressed) {moveX(true);}
+	    if (rightPressed) {moveX(false);}
+	}
 	
 	private class Timer {
 		int seconds;
