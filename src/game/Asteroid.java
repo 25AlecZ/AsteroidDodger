@@ -25,19 +25,21 @@ public class Asteroid{
 		return this.COLOR;
 	}
 	
-	public void move(int screenWidth, Point reset) {
+	public void move(int screenWidth, Polygon player) {
         shape.position.x += xSpeed;
         shape.position.y += ySpeed;
         if (shape.position.x > screenWidth || shape.position.x < 0) {
-        	//shape.position.x = reset.getX();
-        	//shape.position.y = reset.getY();
         	xSpeed *= -1;
         } 
         
         if(shape.position.y > screenWidth || shape.position.y < 0) {
         	ySpeed *= -1;
         }
+        
+        
        
     }
+	
+	
 	
 }
