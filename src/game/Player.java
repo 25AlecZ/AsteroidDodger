@@ -10,6 +10,7 @@ public class Player implements KeyListener{
 	private int speed;
 	private Polygon shape;
 	private boolean upPressed, downPressed, leftPressed, rightPressed;
+	private boolean gameOver = false;
 	public Player(int x, int y, int health, int speed) {
 		this.health = health;
 		this.speed = speed;
@@ -18,6 +19,14 @@ public class Player implements KeyListener{
 		Point[] points = {new Point(0, 10), new Point(50, 0), new Point(50, 20)};
 		this.shape = new Polygon(points, new Point(x,y), 0);
 	}
+	
+	public void setGameOver() {
+		gameOver = true;
+	}
+	public boolean isGameOver() {
+		return gameOver;
+	}
+	
 	
 	public int getTimeLived() {
 		return timeLived.getSeconds();
@@ -101,10 +110,12 @@ public class Player implements KeyListener{
 	}
 	
 	public void move() {
-	    if (upPressed) {moveY(true);}
-	    if (downPressed) {moveY(false);}
-	    if (leftPressed) {moveX(true);}
-	    if (rightPressed) {moveX(false);}
+		if(!gameOver) {
+		    if (upPressed) {moveY(true);}
+		    if (downPressed) {moveY(false);}
+		    if (leftPressed) {moveX(true);}
+		    if (rightPressed) {moveX(false);}
+		}
 	}
 	
 	private class Timer {
