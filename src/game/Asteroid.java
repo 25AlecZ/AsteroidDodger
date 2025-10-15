@@ -8,6 +8,8 @@ public class Asteroid{
 	private final Color COLOR = Color.GRAY;
 	private int xSpeed;
 	private int ySpeed;
+	private int collideCooldown = 0;
+	private static final int COOLDOWN_FRAMES = 5;
 	
 	public Asteroid(int x, int y, int xSpeed, int ySpeed) {
 		
@@ -35,11 +37,23 @@ public class Asteroid{
         if(shape.position.y > screenWidth || shape.position.y < 0) {
         	ySpeed *= -1;
         }
-        
-        
-       
+        tickCooldown();
     }
-	
-	
-	
+	public boolean canCollide() {
+	    return collideCooldown == 0;
+	}
+
+	public void tickCooldown() {
+	    if (collideCooldown > 0) collideCooldown--;
+	}
+	public void collideReverse()
+	{
+		xSpeed *= -1;
+		ySpeed *= -1;
+		collideCooldown = COOLDOWN_FRAMES;
+	}
+	public void moveAfterReverse() {
+	    shape.position.x += xSpeed;
+	    shape.position.y += ySpeed;
+	}
 }

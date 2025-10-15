@@ -12,15 +12,15 @@ import java.awt.event.*;
 import java.util.Random;
 
 class AsteroidDodger extends Game {
-	static int counter = 0;
 	static int rotation = 0;
 	//keep asteroid instances outside of paint method for rotation
 	private Asteroid[] asteroids;
 	private Player p;
-	
+	private boolean exploding = false;
+	private int explosionFrame = 0;
 	
   public AsteroidDodger() {
-    super("YourGameName!",1000,1000);
+    super("Asteroid Dodger",1000,1000);
     this.setFocusable(true);
 	this.requestFocus();
 	this.asteroids = new Asteroid[] {new Asteroid(100, 150, 5, 7), new Asteroid(300, 400, 7, 7),
@@ -34,7 +34,7 @@ class AsteroidDodger extends Game {
 		    new Asteroid(100, 900, 26, 18) */
 		    };
 	
-	this.p = new Player(500,500,100,15);
+	this.p = new Player(500,500,1,15);
 	
 	
 	this.addKeyListener(this.p);
@@ -45,52 +45,82 @@ class AsteroidDodger extends Game {
   		brush.setColor(Color.black);
     	brush.fillRect(0,0,width,height);
   		if(!p.isGameOver()) {
-  			
-  			if(collisionCheck()) {
-  				p.decrementHealth();
-  			} else {
-  				moveAsteroids();
-  				
+  			if (!exploding)
+  			{
+	  			moveAsteroids();
+	  			if(collisionCheck()) {
+	  				p.decrementHealth();
+	  			} else {
+	  				moveAsteroids();
+	  			}
   			}
 
   	        // Apply damage only if player is not invincible
   	        
   			
-  			if(p.getHealth() <= 0) {
-  				p.setGameOver();
-  			}
-  			
-  			
+  		    if (p.getHealth() <= 0 && !exploding) {
+  		        exploding = true;
+  		        explosionFrame = 0;
+
+  		        new Thread() {
+  		            @Override
+  		            public void run() {
+  		                for (int i = 0; i <= 90; i++) {
+  		                    explosionFrame = i;
+  		                    try { Thread.sleep(33); } catch (InterruptedException ignored) {}
+  		                    repaint();
+  		                }
+  		                exploding = false;
+  		                p.setGameOver();
+  		            }
+  		        }.start();
+  		    }
   			
   			p.move();
   			
   			brush.setColor(Color.GRAY);
   			for(Asteroid a : asteroids) {
-  				a.getShape().rotation+=5;
+  				if (!exploding)
+  				{
+  					a.getShape().rotation+=5;
+  				}
   				draw(a.getShape().getPoints(), brush);
   			}
   			
-  			brush.setColor(Color.GRAY);
-            draw(p.getShape().getPoints(), brush);
+  			if (!exploding)
+  			{
+	  			brush.setColor(Color.RED);
+	            draw(p.getShape().getPoints(), brush);
+  			}
             
-  			if(counter%60 == 0) {
+  			if(!exploding) {
             	p.incrementTimer();
             }
   			
-  			 brush.drawString("time lived: " + p.getTimeLived(), 10, 50);
-  	        brush.drawString("lives: " + p.getHealth(), 10, 30);
-  	    	brush.drawString("Counter is " + counter,10,10);
+  			brush.setColor(Color.WHITE);
+  			brush.drawString("Time Alive: " + p.getTimeLived()/60, 10, 40);
+  	        brush.drawString("Lives Remaining: " + p.getHealth(), 10, 20);
+  	    	//brush.drawString("Counter is " + counter,10,10);
   			
   		} else {
   			brush.setColor(Color.WHITE);
-  			brush.drawString("Game Over", 500, 500);
+  			brush.drawString("Game Over", 460, 500);
+  			brush.drawString("Time Alive: " + p.getTimeLived()/60 + "." + 
+  					p.getTimeLived() % 60, 440, 530);
+  		}
+  		if (exploding) {
+  		    int alpha = Math.max(0, 255 - explosionFrame * 3);
+  		    brush.setColor(new Color(255, 180, 0, alpha));
+  		    brush.fillRect(0, 0, getWidth(), getHeight());
   		}
   	}
   	
   	
-  	private  boolean collisionCheck() {
+  	private boolean collisionCheck() {
   		for(Asteroid a : this.asteroids) {
   			if(a.getShape().collides(p.getShape())) {
+  				a.collideReverse();
+  				a.moveAfterReverse();
   				return true;
   			}
   		}
@@ -116,12 +146,6 @@ class AsteroidDodger extends Game {
             
             brush.fillPolygon(x, y, pts.length);
 	}
-  
-	
-	
-	
-	
-	
 	
 	public static void main (String[] args) {
    		AsteroidDodger a = new AsteroidDodger();

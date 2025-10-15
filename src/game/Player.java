@@ -15,8 +15,15 @@ public class Player implements KeyListener{
 		this.health = health;
 		this.speed = speed;
 		this.timeLived = new Timer();
-		
-		Point[] points = {new Point(0, 10), new Point(50, 0), new Point(50, 20)};
+		Point[] points = {
+				new Point(0, 0), new Point(4, 10), new Point(8, 20),
+			    new Point(8, 40), new Point(10, 60),
+			    new Point(20, 80), new Point(8, 80),
+			    new Point(0, 90),
+			    new Point(-8, 80), new Point(-20, 80),
+			    new Point(-10, 60), new Point(-8, 40),
+			    new Point(-8, 20), new Point(-4, 10), new Point(0, 0)
+		};
 		this.shape = new Polygon(points, new Point(x,y), 0);
 	}
 	
@@ -115,6 +122,20 @@ public class Player implements KeyListener{
 		    if (downPressed) {moveY(false);}
 		    if (leftPressed) {moveX(true);}
 		    if (rightPressed) {moveX(false);}
+		    final int SCREENWIDTH = 1000;
+		    int minLocalX = -20, maxLocalX = 20;
+		    int minLocalY = 0,   maxLocalY = 90;
+
+		    if (shape.position.x < -minLocalX) {
+		        shape.position.x = -minLocalX;
+		    } else if (shape.position.x > SCREENWIDTH - maxLocalX) {
+		        shape.position.x = SCREENWIDTH - maxLocalX;
+		    }
+		    if (shape.position.y < -minLocalY) {
+		        shape.position.y = -minLocalY;
+		    } else if (shape.position.y > SCREENWIDTH - maxLocalY) {
+		        shape.position.y = SCREENWIDTH - maxLocalY;
+		    }
 		}
 	}
 	
