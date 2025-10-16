@@ -159,6 +159,8 @@ class AsteroidDodger extends Game {
   			
   		}
   	}
+  	
+  	
 	
 	public static void main (String[] args) {
    		AsteroidDodger a = new AsteroidDodger();

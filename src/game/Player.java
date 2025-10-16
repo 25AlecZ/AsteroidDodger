@@ -149,6 +149,7 @@ public class Player implements KeyListener, gameObject{
 	public void moveY(boolean up) {
 		if(up) {
 			shape.position.y -= speed;
+			
 		} else {
 			shape.position.y += speed;
 
