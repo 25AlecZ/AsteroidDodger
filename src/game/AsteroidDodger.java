@@ -8,7 +8,6 @@ NOTE: This class is the metaphorical "main method" of your program,
 
 */
 import java.awt.*;
-import java.awt.event.*;
 import java.util.Random;
 
 class AsteroidDodger extends Game {
@@ -18,6 +17,8 @@ class AsteroidDodger extends Game {
 	private Player p;
 	private boolean exploding = false;
 	private int explosionFrame = 0;
+	private HealthPack healthPack = null;
+	private int lastPackSeconds = -10;   // so one can spawn at start after 10s
 	
 	private interface explosion {
         /** 
@@ -99,7 +100,28 @@ class AsteroidDodger extends Game {
                 };
             }
   			
+  			
   			p.move(1000);
+  			
+  			int currentSeconds = p.getTimeLived() / 60;
+			if (explosionEffect == null && 
+					((healthPack == null) || !healthPack.isActive()) && 
+					currentSeconds - lastPackSeconds >= 10) {
+				Random r = new Random();
+				int x = 50 + r.nextInt(900);
+				int y = 50 + r.nextInt(900);
+				healthPack = new HealthPack(x, y, 40);
+				lastPackSeconds = currentSeconds;
+			}
+			
+			if (explosionEffect == null && healthPack != null && 
+					healthPack.isActive() && p.isActive()) {
+				if (healthPack.getShape().collides(p.getShape())) {
+					p.incrementHealth();
+					healthPack.setActive(false);
+					lastPackSeconds = currentSeconds;
+				}
+			}
   			
   			for(Asteroid a : asteroids) {
   				if (explosionEffect == null)
@@ -111,6 +133,10 @@ class AsteroidDodger extends Game {
   					a.draw(brush);
   				}
   			}
+  			
+  			if (healthPack != null && healthPack.isActive()) {
+				healthPack.draw(brush);
+			}
   			
   			if (p.isActive() && !exploding)
   			{

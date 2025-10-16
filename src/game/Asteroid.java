@@ -3,7 +3,7 @@ package game;
 import java.awt.*;
 import java.awt.Color;
 
-public class Asteroid implements gameObject{
+public class Asteroid implements GameObject{
 	
 	private Polygon shape;
 	private final Color COLOR = Color.GRAY;
@@ -75,11 +75,11 @@ public class Asteroid implements gameObject{
 	public void collideReverse()
 	{
 		xSpeed *= -1;
-		ySpeed *= 1;
+		ySpeed *= -1;
 		collideCooldown = COOLDOWN_FRAMES;
 	}
 	public void moveAfterReverse() {
-	    shape.position.x += xSpeed;
-	    shape.position.y += ySpeed;
+	    shape.position.x += 3 * xSpeed;
+	    shape.position.y += 3 * ySpeed;
 	}
 }
