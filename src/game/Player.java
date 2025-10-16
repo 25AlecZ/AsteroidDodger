@@ -4,7 +4,7 @@ import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
-public class Player implements KeyListener, gameObject{
+public class Player implements KeyListener, GameObject{
 	
 	private Timer timeLived;
 	private int health;
@@ -144,6 +144,10 @@ public class Player implements KeyListener, gameObject{
 	
 	public void decrementHealth() {
 		health--;
+	}
+	
+	public void incrementHealth() {
+	    health++;
 	}
 	
 	public void moveY(boolean up) {

@@ -1,7 +1,7 @@
 package game;
 import java.awt.*;
 
-public interface gameObject {
+public interface GameObject {
 	
 	/**
 	 * How object moves around the screen
