@@ -76,21 +76,19 @@ class AsteroidDodger extends Game {
   		        }.start();
   		    }
   			
-  			p.move();
+  			p.move(1000);
   			
-  			brush.setColor(Color.GRAY);
   			for(Asteroid a : asteroids) {
-  				if (!exploding)
+  				if (a.isActive() && !exploding)
   				{
   					a.getShape().rotation+=5;
   				}
-  				draw(a.getShape().getPoints(), brush);
+  				a.draw(brush);
   			}
   			
-  			if (!exploding)
+  			if (p.isActive() && !exploding)
   			{
-	  			brush.setColor(Color.RED);
-	            draw(p.getShape().getPoints(), brush);
+	  			p.draw(brush);
   			}
             
   			if(!exploding) {
@@ -100,7 +98,7 @@ class AsteroidDodger extends Game {
   			brush.setColor(Color.WHITE);
   			brush.drawString("Time Alive: " + p.getTimeLived()/60, 10, 40);
   	        brush.drawString("Lives Remaining: " + p.getHealth(), 10, 20);
-  	    	//brush.drawString("Counter is " + counter,10,10);
+  	        
   			
   		} else {
   			brush.setColor(Color.WHITE);
@@ -129,23 +127,10 @@ class AsteroidDodger extends Game {
   	
   	private void moveAsteroids() {
   		for(Asteroid a : asteroids) {
-  			a.move(1000, p.getShape());
+  			a.move(1000);
   			
   		}
   	}
-  	
-	
-	
-	public static void draw(Point[] pts, Graphics brush) {
-		 int[] x = new int[pts.length];
-            int[] y = new int[pts.length];
-            for (int i = 0; i < pts.length; i++) {
-                x[i] = (int) pts[i].x;
-                y[i] = (int) pts[i].y;
-            }
-            
-            brush.fillPolygon(x, y, pts.length);
-	}
 	
 	public static void main (String[] args) {
    		AsteroidDodger a = new AsteroidDodger();

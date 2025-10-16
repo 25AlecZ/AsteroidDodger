@@ -1,9 +1,10 @@
 package game;
 
+import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
-public class Player implements KeyListener{
+public class Player implements KeyListener, gameObject{
 	
 	private Timer timeLived;
 	private int health;
@@ -11,6 +12,8 @@ public class Player implements KeyListener{
 	private Polygon shape;
 	private boolean upPressed, downPressed, leftPressed, rightPressed;
 	private boolean gameOver = false;
+	private boolean active = true;
+	
 	public Player(int x, int y, int health, int speed) {
 		this.health = health;
 		this.speed = speed;
@@ -27,51 +30,56 @@ public class Player implements KeyListener{
 		this.shape = new Polygon(points, new Point(x,y), 0);
 	}
 	
-	public void setGameOver() {
-		gameOver = true;
-	}
-	public boolean isGameOver() {
-		return gameOver;
+	@Override
+	public void move(int screenWidth) {
+		if(!gameOver) {
+		    if (upPressed) {moveY(true);}
+		    if (downPressed) {moveY(false);}
+		    if (leftPressed) {moveX(true);}
+		    if (rightPressed) {moveX(false);}
+		    int minLocalX = -20, maxLocalX = 20;
+		    int minLocalY = 0,   maxLocalY = 90;
+
+		    if (shape.position.x < -minLocalX) {
+		        shape.position.x = -minLocalX;
+		    } else if (shape.position.x > screenWidth - maxLocalX) {
+		        shape.position.x = screenWidth - maxLocalX;
+		    }
+		    if (shape.position.y < -minLocalY) {
+		        shape.position.y = -minLocalY;
+		    } else if (shape.position.y > screenWidth - maxLocalY) {
+		        shape.position.y = screenWidth - maxLocalY;
+		    }
+		}
 	}
 	
-	
-	public int getTimeLived() {
-		return timeLived.getSeconds();
-	}
-	
-	public void incrementTimer() {
-		this.timeLived.seconds++;
-	}
-	
-	public int getHealth() {
-		return health;
-	}
-	
-	public void decrementHealth() {
-		health--;
-	}
-	
+	@Override
 	public Polygon getShape() {
 		return shape;
 	}
 	
-	public void moveY(boolean up) {
-		if(up) {
-			shape.position.y -= speed;
-		} else {
-			shape.position.y += speed;
-
-		}
-		
+	@Override
+	public void draw(Graphics g) {
+	    g.setColor(Color.RED);
+	    Point[] pts = shape.getPoints();
+	    int[] xs = new int[pts.length], ys = new int[pts.length];
+	    for (int i = 0; i < pts.length; i++) {
+	        xs[i] = (int) pts[i].x;
+	        ys[i] = (int) pts[i].y;
+	    }
+	    g.fillPolygon(xs, ys, pts.length);
 	}
 	
-	public void moveX(boolean left) {
-		if(left) {
-			shape.position.x -= speed;
-		} else {
-			shape.position.x += speed;
-		}
+	@Override
+    public boolean isActive() {
+		return active; 
 	}
+
+    @Override
+    public void setActive(boolean active) {
+    	this.active = active; 
+    }
+    
 	@Override
 	public void keyTyped(KeyEvent e) {}
 	
@@ -92,9 +100,7 @@ public class Player implements KeyListener{
 		case KeyEvent.VK_RIGHT: 
 			rightPressed = true;
 			break;
-	}
-			
-		
+		}	
 	}
 
 	@Override
@@ -113,29 +119,48 @@ public class Player implements KeyListener{
 				rightPressed = false;
 				break;
 		}
-	
 	}
 	
-	public void move() {
-		if(!gameOver) {
-		    if (upPressed) {moveY(true);}
-		    if (downPressed) {moveY(false);}
-		    if (leftPressed) {moveX(true);}
-		    if (rightPressed) {moveX(false);}
-		    final int SCREENWIDTH = 1000;
-		    int minLocalX = -20, maxLocalX = 20;
-		    int minLocalY = 0,   maxLocalY = 90;
+	public void setGameOver() {
+		gameOver = true;
+		active = false;
+	}
+	
+	public boolean isGameOver() {
+		return gameOver;
+	}
+	
+	public int getTimeLived() {
+		return timeLived.getSeconds();
+	}
+	
+	public void incrementTimer() {
+		this.timeLived.seconds++;
+	}
+	
+	public int getHealth() {
+		return health;
+	}
+	
+	public void decrementHealth() {
+		health--;
+	}
+	
+	public void moveY(boolean up) {
+		if(up) {
+			shape.position.y -= speed;
+		} else {
+			shape.position.y += speed;
 
-		    if (shape.position.x < -minLocalX) {
-		        shape.position.x = -minLocalX;
-		    } else if (shape.position.x > SCREENWIDTH - maxLocalX) {
-		        shape.position.x = SCREENWIDTH - maxLocalX;
-		    }
-		    if (shape.position.y < -minLocalY) {
-		        shape.position.y = -minLocalY;
-		    } else if (shape.position.y > SCREENWIDTH - maxLocalY) {
-		        shape.position.y = SCREENWIDTH - maxLocalY;
-		    }
+		}
+		
+	}
+	
+	public void moveX(boolean left) {
+		if(left) {
+			shape.position.x -= speed;
+		} else {
+			shape.position.x += speed;
 		}
 	}
 	
