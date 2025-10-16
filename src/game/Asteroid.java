@@ -75,7 +75,7 @@ public class Asteroid implements gameObject{
 	public void collideReverse()
 	{
 		xSpeed *= -1;
-		ySpeed *= -1;
+		ySpeed *= 1;
 		collideCooldown = COOLDOWN_FRAMES;
 	}
 	public void moveAfterReverse() {

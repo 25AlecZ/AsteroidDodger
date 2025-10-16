@@ -19,7 +19,21 @@ class AsteroidDodger extends Game {
 	private boolean exploding = false;
 	private int explosionFrame = 0;
 	
-  public AsteroidDodger() {
+	private interface explosion {
+        /** 
+         * advances one frame, return true when done
+         * 
+         * @return true when process ffinishes
+         */
+        public boolean tick();
+        /** 
+         * draw the effect for the current frame 
+         * */
+        public void draw(Graphics g);
+    }
+    private explosion explosionEffect = null;
+    
+    public AsteroidDodger() {
     super("Asteroid Dodger",1000,1000);
     this.setFocusable(true);
 	this.requestFocus();
@@ -34,9 +48,7 @@ class AsteroidDodger extends Game {
 		    new Asteroid(100, 900, 26, 18) */
 		    };
 	
-	this.p = new Player(500,500,1,15);
-	
-	
+	this.p = new Player(500,500,5,15);
 	this.addKeyListener(this.p);
   }
   
@@ -45,7 +57,7 @@ class AsteroidDodger extends Game {
   		brush.setColor(Color.black);
     	brush.fillRect(0,0,width,height);
   		if(!p.isGameOver()) {
-  			if (!exploding)
+  			if (explosionEffect == null)
   			{
 	  			moveAsteroids();
 	  			if(collisionCheck()) {
@@ -56,34 +68,48 @@ class AsteroidDodger extends Game {
   			}
 
   	        // Apply damage only if player is not invincible
-  	        
   			
-  		    if (p.getHealth() <= 0 && !exploding) {
-  		        exploding = true;
-  		        explosionFrame = 0;
+  			if (p.getHealth() <= 0 && explosionEffect == null) {
+                exploding = true;
+                explosionFrame = 0;
 
-  		        new Thread() {
-  		            @Override
-  		            public void run() {
-  		                for (int i = 0; i <= 90; i++) {
-  		                    explosionFrame = i;
-  		                    try { Thread.sleep(33); } catch (InterruptedException ignored) {}
-  		                    repaint();
-  		                }
-  		                exploding = false;
-  		                p.setGameOver();
-  		            }
-  		        }.start();
-  		    }
+                final int FRAMES = 90;
+                //anonymous inner class
+                explosionEffect = new explosion() {
+                    int frame = 0;
+
+                    @Override
+                    public boolean tick() {
+                        explosionFrame = frame;
+                        frame++;
+                        if (frame > FRAMES) {
+                            exploding = false;
+                            p.setGameOver();
+                            return true;
+                        }
+                        return false;
+                    }
+
+                    @Override
+                    public void draw(Graphics g) {
+                        int alpha = Math.max(0, 255 - frame * 3);
+                        g.setColor(new Color(255, 180, 0, alpha));
+                        g.fillRect(0, 0, getWidth(), getHeight());
+                    }
+                };
+            }
   			
   			p.move(1000);
   			
   			for(Asteroid a : asteroids) {
-  				if (a.isActive() && !exploding)
+  				if (explosionEffect == null)
   				{
   					a.getShape().rotation+=5;
   				}
-  				a.draw(brush);
+  				if (a.isActive())
+  				{
+  					a.draw(brush);
+  				}
   			}
   			
   			if (p.isActive() && !exploding)
@@ -106,10 +132,12 @@ class AsteroidDodger extends Game {
   			brush.drawString("Time Alive: " + p.getTimeLived()/60 + "." + 
   					p.getTimeLived() % 60, 440, 530);
   		}
-  		if (exploding) {
-  		    int alpha = Math.max(0, 255 - explosionFrame * 3);
-  		    brush.setColor(new Color(255, 180, 0, alpha));
-  		    brush.fillRect(0, 0, getWidth(), getHeight());
+  		if (explosionEffect != null) {
+  		    explosionEffect.draw(brush);
+  		    if (explosionEffect.tick())
+  		    {
+  		    	explosionEffect = null;
+  		    }
   		}
   	}
   	
