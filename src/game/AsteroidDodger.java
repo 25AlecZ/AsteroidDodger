@@ -10,6 +10,8 @@ NOTE: This class is the metaphorical "main method" of your program,
 import java.awt.*;
 import java.util.Random;
 
+import game.Point;
+
 class AsteroidDodger extends Game {
 	static int rotation = 0;
 	//keep asteroid instances outside of paint method for rotation
@@ -39,17 +41,14 @@ class AsteroidDodger extends Game {
     this.setFocusable(true);
 	this.requestFocus();
 	this.asteroids = new Asteroid[] {new Asteroid(100, 150, 5, 7), new Asteroid(300, 400, 7, 7),
-		  /*  new Asteroid(500, 250, 23, 18),
-		    new Asteroid(800, 600, 28, 16),
-		    new Asteroid(200, 700, 17, 21),
-		    new Asteroid(900, 300, 30, 15),
-		    new Asteroid(400, 850, 25, 19),
-		    new Asteroid(600, 500, 29, 17),
-		    new Asteroid(750, 200, 32, 14), 
-		    new Asteroid(100, 900, 26, 18) */
+		    new Asteroid(500, 250, 7, 6),
+		    new Asteroid(800, 600, 9, 6),
+		    new Asteroid(200, 700, 6, 7),
+		    new Asteroid(900, 300, 10, 5),
+		    new Asteroid(400, 850, 8, 6),
 		    };
 	
-	this.p = new Player(500,500,5,15);
+	this.p = new Player(500,500,15,7);
 	this.addKeyListener(this.p);
   }
   
@@ -153,10 +152,10 @@ class AsteroidDodger extends Game {
   	        
   			
   		} else {
-  			brush.setColor(Color.WHITE);
-  			brush.drawString("Game Over", 460, 500);
-  			brush.drawString("Time Alive: " + p.getTimeLived()/60 + "." + 
-  					p.getTimeLived() % 60, 440, 530);
+  			EndScreen e = new EndScreen(350, 350);
+  			e.draw(brush);
+  			
+  			
   		}
   		if (explosionEffect != null) {
   		    explosionEffect.draw(brush);
@@ -186,6 +185,33 @@ class AsteroidDodger extends Game {
   		}
   	}
   	
+  	private class EndScreen {
+  		private Polygon shape;
+  		private double score;
+  		
+  		public EndScreen(int x, int y) {
+  			Point[] pts = {new Point(0,300), new Point(0,0), new Point(300, 0), new Point(300,300)};
+  			this.shape = new Polygon(pts, new Point(x,y), 0);
+  			this.score = ((p.getTimeLived()/60.0) * 20)/asteroids.length;
+  		}
+  		
+  		public void draw(Graphics brush) {
+  			brush.setColor(Color.GRAY);
+  		    Point[] pts = shape.getPoints();
+  		    int[] xs = new int[pts.length], ys = new int[pts.length];
+  		    for (int i = 0; i < pts.length; i++) {
+  		        xs[i] = (int) pts[i].x;
+  		        ys[i] = (int) pts[i].y;
+  		    }
+  		    
+  		    brush.fillPolygon(xs, ys, pts.length);
+  		    brush.setColor(Color.WHITE);
+			brush.drawString("Game Over", 470, 470);
+			brush.drawString("Time Alive: " + p.getTimeLived()/60 + "." + 
+					p.getTimeLived() % 60, 450, 500);
+			brush.drawString("Score: " + Math.round(score * 100.0) / 100.0, 470, 530);
+  		}
+  	}
   	
 	
 	public static void main (String[] args) {
