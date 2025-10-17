@@ -79,7 +79,7 @@ public class Asteroid implements GameObject{
 		collideCooldown = COOLDOWN_FRAMES;
 	}
 	public void moveAfterReverse() {
-	    shape.position.x += 3 * xSpeed;
-	    shape.position.y += 3 * ySpeed;
+	    shape.position.x += 5 * xSpeed;
+	    shape.position.y += 5 * ySpeed;
 	}
 }

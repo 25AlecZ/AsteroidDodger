@@ -34,6 +34,13 @@ class AsteroidDodger extends Game {
          * */
         public void draw(Graphics g);
     }
+	/**
+	 * Functional interface for lambda expression
+	 */
+	public interface Action {
+	    void execute();
+	}
+	
     private explosion explosionEffect = null;
     
     public AsteroidDodger() {
@@ -48,7 +55,7 @@ class AsteroidDodger extends Game {
 		    new Asteroid(400, 850, 8, 6),
 		    };
 	
-	this.p = new Player(500,500,15,7);
+	this.p = new Player(500,500,15,10);
 	this.addKeyListener(this.p);
   }
   
@@ -116,7 +123,8 @@ class AsteroidDodger extends Game {
 			if (explosionEffect == null && healthPack != null && 
 					healthPack.isActive() && p.isActive()) {
 				if (healthPack.getShape().collides(p.getShape())) {
-					p.incrementHealth();
+					Action heal = () -> p.incrementHealth();
+					heal.execute();
 					healthPack.setActive(false);
 					lastPackSeconds = currentSeconds;
 				}
